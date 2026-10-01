@@ -21,10 +21,10 @@ public class CatalogueRepo {
         addItem(new Equipment("E04", "Football", "Good", 7));
         addItem(new Equipment("E05", "Football boot", "Good", 7));
 
-        addItem(new ServiceItem("S01", "Drink",3, ""));
-        addItem(new ServiceItem("S02", "Food",6, ""));
-        addItem(new ServiceItem("S03", "Cleaning",4, ""));
-        addItem(new ServiceItem("S04", "",0, ""));
+        addItem(new ServiceItem("S01", "Drink",3, "jo"));
+        addItem(new ServiceItem("S02", "Food",6, "hg"));
+        addItem(new ServiceItem("S03", "Cleaning",4, "gs"));
+        addItem(new ServiceItem("S04", "adad",4, "da"));
     }
     public void addItem(Item item){
         Objects.requireNonNull(item, "Item Cannot be Null");
@@ -38,6 +38,7 @@ public class CatalogueRepo {
         System.out.println("+--------+---------------------------+-------------------+-----------+---------------------------------+");
         System.out.printf("| %-6s | %-25s | %-17s | %-9s | %-31s |,\n","Code", "Item Name", "Category", "Price (RM)", "Specifications");
 
+        System.out.println("+--------+---------------------------+-------------------+-----------+---------------------------------+");
         for(Item item : catalogue.values()){
             System.out.printf("| %-6s | %-25s | %-17s | %-9s | %-31s |\n", 
                 item.getItemCode(),
