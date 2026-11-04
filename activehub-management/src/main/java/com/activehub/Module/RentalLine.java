@@ -33,7 +33,8 @@ public class RentalLine {
     }
     @Override 
     public String toString(){
-        return String.format("%-24s | %-16s | RM %6.2f", item.getItemCode, item.get);
+        return String.format("%-6s | %-24s | %3d x RM %6.2f | RM %7.2f",
+                item.getItemCode(), item.getItemName(), quantity, item.getrentalPrice(), getTotalRentalItemPrice());
     }
 
 }
