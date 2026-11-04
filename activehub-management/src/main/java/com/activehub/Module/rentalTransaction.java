@@ -1,6 +1,5 @@
 package com.activehub.Module;
 
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,5 +65,57 @@ public class rentalTransaction {
             lineItems.put(code, new RentalLine(item, quantity));
         }
     }
-    
+    public double getSubtotalByCategory(ItemCategory category){
+        double subtotal = 0.0;
+        for(RentalLine line : lineItems.values()){
+            subtotal += line.getTotalRentalItemPrice();
+        }
+        return subtotal;
+    }
+    public int getTotalEquipment(){
+        int count = 0; 
+        for(RentalLine line : lineItems.values()){
+            if(line.getItem().getCategory() == ItemCategory.EQUIPMENT){
+                count += line.getQuantity();
+            }
+        }
+        return count;
+    }
+    public double getPreDisSubtotal(){
+        double total = 0;
+        for (RentalLine line : lineItems.values()) {
+            total += line.getTotalRentalItemPrice();
+        }
+        return total;
+    }
+     public void displayReceipt() {
+        String border = "=================================================================";
+        System.out.println(border);
+        System.out.println("                   ACTIVEHUB TRANSACTION RECEIPT                 ");
+        System.out.println(border);
+        System.out.printf("Txn ID: %-16s Date: %s\n", transactionId, TimeStamp.toLocalDate());
+        System.out.printf("Customer: %-14s Contact: %s\n", customerName, customerContact);
+        if (linkBooking != null) {
+            System.out.printf("Linked Booking: %-10s Court: %s (%s, %d hrs)\n",
+                    linkBooking.getBookingID(), linkBooking.getFacilityCode(),
+                    linkBooking.getBookingTime(), linkBooking.getDurationHours());
+        } else {
+            System.out.println("Type: WALK-IN (No Court Booking)");
+        }
+        System.out.println("-----------------------------------------------------------------");
+        System.out.printf("%-6s | %-24s | %-16s | %-9s\n", "Code", "Item Description", "Qty x Price", "Total");
+        System.out.println("-----------------------------------------------------------------");
+
+        for (RentalLine line : lineItems.values()) {
+            System.out.println(line);
+        }
+
+        System.out.println("-----------------------------------------------------------------");
+        System.out.printf("Facility Subtotal:                                    RM %7.2f\n", getSubtotalByCategory(ItemCategory.FACILITY));
+        System.out.printf("Equipment Subtotal:                                   RM %7.2f\n", getSubtotalByCategory(ItemCategory.EQUIPMENT));
+        System.out.printf("Service Subtotal:                                     RM %7.2f\n", getSubtotalByCategory(ItemCategory.SERVICE));
+        System.out.println("-----------------------------------------------------------------");
+        System.out.printf("RAW SUBTOTAL:                                         RM %7.2f\n", getPreDisSubtotal());
+        System.out.println(border);
+    }
 }
