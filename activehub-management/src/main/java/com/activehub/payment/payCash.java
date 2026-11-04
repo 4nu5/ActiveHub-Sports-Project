@@ -23,7 +23,9 @@ public class payCash implements Payment{
     public double getAmount(){
         return amountPayed;
     }
-     @Override 
+    public double getCashReceived(){
+        return cashReceived;
+    }
     public double getChange(){
         return change;
     }
