@@ -9,9 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.activehub.Module.Booking;
+import com.activehub.Module.Item;
 import com.activehub.Module.RentalLine;
+import com.activehub.Module.rentalTransaction;
+import com.activehub.payment.Payment;
 
 public class Reporting {
+
+    private ArrayList<Map.Entry<String, Integer>> List;
     public static class TransactionRecord{
         private final String transactionId;
         private final String customerName;
@@ -57,7 +62,18 @@ public class Reporting {
         public List<RentalLine> getLine() {
             return line;
         }
+    }
         private final List<TransactionRecord> dailyRecords = new ArrayList<>();
+
+        public void recordCompleteTransaction(rentalTransaction trans, double discount, double SST, double finalTotal, Payment payment){
+            
+            List<RentalLine> line = new ArrayList<>(trans.getRentalLines());
+            dailyRecords.add(new TransactionRecord(
+            trans.getTransactionId(),
+            trans.getCustomerName(),
+            trans.getPreDisSubtotal(),
+            discount, SST, finalTotal, payment.getPaymentMethod(),line));
+        }
 
         public void generateDailyReport(Collection<Booking> allBooking){
             String Border = "=================================================";
@@ -110,6 +126,29 @@ public class Reporting {
                 System.out.printf(" Average Order Value :  RM %10.2f\n", (revenue / dailyRecords.size()));
             }
             System.out.println(Border2);
+            
+            System.out.println("3. Payment Method Breakdown");
+            if(paymentCount.isEmpty()){
+                System.out.println(" No Transaction done Today");
+            }else{
+                for(Map.Entry<String, Integer> entry : paymentCount.entrySet()){
+                    System.out.printf("%-25s : %d transaction(s)\n", entry.getKey(), entry.getValue());
+                }
+            }
+            System.out.println(Border2);
+        
+
+            System.out.println("4. Inventory / Service Usage Frequency");
+            if(itemFrequent.isEmpty()){
+                System.out.println("No Items / Services were rented");
+            }
+            else{
+                List> sortedItems = new ArrayList<>(itemFrequent.entrySet());
+                sortedItems.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+                for (Map.Entry<String, Integer> e : sortedItems) {
+                System.out.printf("  %-35s : %3d unit(s) utilized\n", e.getKey(), e.getValue());
+                }
+            }
+            System.out.println(Border + "\n");
         }
     }
-}

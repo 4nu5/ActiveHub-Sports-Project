@@ -53,7 +53,7 @@ public class rentalTransaction {
     public LocalDateTime getTimeStamp() {
         return TimeStamp;
     }
-    public Collection<RentalLine> gRentalLines(){
+    public Collection<RentalLine> getRentalLines(){
         return Collections.unmodifiableCollection(lineItems.values());
     }
     public void addItem(Item item, int quantity){
