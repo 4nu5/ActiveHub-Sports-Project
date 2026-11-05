@@ -1,39 +1,39 @@
 package com.activehub.main;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.Scanner;
 
+import com.activehub.Module.rentalTransaction;
 import com.activehub.Service.BookingSystem;
+import com.activehub.persistance.ServicePersistance;
+import com.activehub.promotion.PromoCalculator;
 import com.activehub.repository.CatalogueRepo;
 
 
+
+
 public class Main {
+    private static final Scanner sc = new Scanner(System.in);
+    private static final CatalogueRepo cat = new CatalogueRepo();
+    private static final BookingSystem book = new BookingSystem();
+    private static final PromoCalculator promo  = new PromoCalculator();
+    private static final ReportingService report = new ReportingService();
+    private static final ServicePersistance persistant = new ServicePersistance();
+
+    private static rentalTransaction activeTransaction = null;
+    private static int transactionSeq = 5000;
+
     public static void main(String[] args) {
-        System.out.println("Active Hub Centre");
-        CatalogueRepo cat = new CatalogueRepo();
+        String Border = "=================================================";
+        System.out.println(Border);
+        System.out.println("Active Hub Sports Centre");
+        System.out.println(Border);
 
-        cat.displayCatalogue();
+        persistant.loadBookings(book);
+        System.out.println("Booking Records reloaded");
 
-        BookingSystem bookingService = new BookingSystem();
-        LocalDate testDate = LocalDate.now();
-
-        System.out.println("--- 1. Creating Initial Booking (10:00 - 12:00) ---");
-        bookingService.createBooking("Tony Stark", "012-3456789", "FC-01",
-                testDate, LocalTime.of(10, 0), 2, 4);
-
-        System.out.println("--- 2. Attempting Conflicting Booking (11:00 - 13:00) ---");
-        try {
-            bookingService.createBooking("Bruce Banner", "019-8765432", "FC-01",
-                    testDate, LocalTime.of(11, 0), 2, 4);
-        } catch (IllegalStateException e) {
-            System.out.println("System Alert: " + e.getMessage());
+        boolean running = true;
+        while(running){
+            printMainMenu();
         }
-
-        System.out.println("\n--- 3. Booking Valid Non-Overlapping Slot (12:00 - 14:00) ---");
-        bookingService.createBooking("Steve Rogers", "011-2233445", "FC-01",
-                testDate, LocalTime.of(12, 0), 2, 8);
-
-        System.out.println("\n--- 4. Active Booking Ledger ---");
-        bookingService.displayBookings();
     }
 }

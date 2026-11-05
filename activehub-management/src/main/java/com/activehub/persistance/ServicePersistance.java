@@ -73,4 +73,11 @@ public class ServicePersistance {
             System.err.println("Error: Could not Read " + Bookings_File + e.getMessage());
         }
     }
+    public void appendTransRecord(String transId, String customer, double rawSubtotal, double discount, double serviceCharge, double finalTotal, String paymentSummary){
+        try(PrintWriter write = new PrintWriter(new FileWriter(Transaction_File, true))){
+            write.printf("%s|%s|%.2f|%.2f|%.2f|%.2f|%s%n", transId, customer, rawSubtotal, discount, serviceCharge, paymentSummary);
+        }catch(IOException e){
+            System.err.println("Error: Failed to append to " + Transaction_File + e.getMessage());
+        }
+    }
 }
