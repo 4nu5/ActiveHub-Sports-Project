@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.activehub.Module.Booking;
-import com.activehub.Module.Item;
 import com.activehub.Module.RentalLine;
 import com.activehub.Module.rentalTransaction;
 import com.activehub.payment.Payment;
@@ -142,13 +141,14 @@ public class Reporting {
             if(itemFrequent.isEmpty()){
                 System.out.println("No Items / Services were rented");
             }
-            else{
-                List> sortedItems = new ArrayList<>(itemFrequent.entrySet());
-                sortedItems.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-                for (Map.Entry<String, Integer> e : sortedItems) {
-                System.out.printf("  %-35s : %3d unit(s) utilized\n", e.getKey(), e.getValue());
-                }
+            else {
+                itemFrequent.entrySet().stream()
+                    .sorted((entryA, entryB) -> entryB.getValue().compareTo(entryA.getValue()))
+                    .forEach(entry -> 
+                        System.out.printf("  %-35s : %3d unit(s) utilized\n", entry.getKey(), entry.getValue())
+                    );
             }
             System.out.println(Border + "\n");
         }
     }
+

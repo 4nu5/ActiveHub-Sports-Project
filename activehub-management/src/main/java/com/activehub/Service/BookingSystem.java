@@ -57,6 +57,17 @@ public Booking createBooking(String custName, String custContact, String facilit
     public Collection<Booking> getAllBookings(){
         return Collections.unmodifiableCollection(bookingTable.values());   
     }
+    public boolean cancelBooking(String bookingId){
+        Booking booking = findBooking(bookingId);
+        if(booking == null){
+            return false;
+        }
+        if(booking.isCancelled()){
+            return false;
+        }
+        booking.Cancelled();
+        return true;
+    }
     public void displayBookings(){
         System.out.println("--------------------------------------------------------");
         System.out.printf("| %-8s | %-20s | %-10s | %-10s | %-13s | %-7s | %-9s |\n", "ID", "Customer", 
