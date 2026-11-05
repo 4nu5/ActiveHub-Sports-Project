@@ -51,5 +51,9 @@ public class PromoCalculator {
                public List<Promotion> getPromotionsAvailable(){
             return Collections.unmodifiableList(PromoAvailable);
         }
+               public static resultPromo getBestPromo(rentalTransaction activeTransaction) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'getBestPromo'");
+               }
 }
 

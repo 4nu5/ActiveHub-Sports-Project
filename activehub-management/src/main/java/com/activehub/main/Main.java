@@ -6,11 +6,17 @@ import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import com.activehub.Module.Booking;
+import com.activehub.Module.Item;
 import com.activehub.Module.rentalTransaction;
 import com.activehub.Service.BookingSystem;
 import com.activehub.Service.Reporting;
+import com.activehub.payment.Payment;
+import com.activehub.payment.payCard;
+import com.activehub.payment.payCash;
+import com.activehub.payment.payEwallet;
 import com.activehub.persistance.ServicePersistance;
 import com.activehub.promotion.PromoCalculator;
+import com.activehub.promotion.Promotion;
 import com.activehub.repository.CatalogueRepo;
 
 
@@ -73,13 +79,93 @@ public class Main {
         }
     }
     private static void PaymentSettlement() {
-        
-        
+        System.out.println("Payment & Close Transaction");
+        if(activeTransaction == null){
+            System.out.println("No active Transactions right now");
+            return;
+        }
+
+        double rawSubtotal = activeTransaction.getPreDisSubtotal();
+        PromoCalculator.resultPromo result = PromoCalculator.getBestPromo(activeTransaction);
+        double discount = (result.getPromo() != null) ? result.getDiscountAmount() : 0.0;
+        double adjustedSubtotal = Math.max(0.0, rawSubtotal - discount);
+        double serviceCharge = adjustedSubtotal * 0.10;
+        double finalAmount = adjustedSubtotal + serviceCharge;
+
+        System.out.println("\nBILLING BREAKDOWN:");
+        System.out.printf("  Subtotal       : RM %7.2f\n", rawSubtotal);
+        if (discount > 0.0) {
+            System.out.printf("  Promo Applied      : %s (-RM %.2f)\n", result.getPromo().getPromoCode(), discount);
+        }
+        System.out.printf("  Adjusted Subtotal  : RM %7.2f\n", adjustedSubtotal);
+        System.out.printf("  Service Charge (10%%): RM %7.2f\n", serviceCharge);
+        System.out.printf("  TOTAL DUE          : RM %7.2f\n", finalAmount);
+
+        System.out.println("\nSelect Payment Method:");
+        System.out.println("1. Cash");
+        System.out.println("2. Credit / Debit Card");
+        System.out.println("3. E-Wallet (GrabPay / TnG / Boost)");
+        System.out.print("Choice (1-3): ");
+
+        String choice = sc.nextLine().trim();
+
+        Payment pay = null;
+        if("1".equals(choice)){
+            System.out.print("Enter Cash Amount: RM ");
+            double cAmount = Double.parseDouble(sc.nextLine().trim());
+            payCash cash = new payCash(finalAmount, cAmount);
+
+            if(cash.processPayment()){
+                pay = cash;
+                System.out.printf("Payment Accepted. \nChange: RM %.2f\n", cash.getChange());
+            }else{
+                System.out.println("Payment Rejected: Insufficent Funds provided");
+                return;
+            }
+        }else if("2".equals(choice)){
+            System.out.println("Enter Card Number");
+            String CardNo = sc.nextLine().trim();
+            System.out.print("Enter Card Type (Credit/Debit)");
+            String cardType = sc.nextLine().trim();
+            pay = new payCard(CardNo, finalAmount ,cardType);
+            pay.processPayment();
+            System.out.println("Card Authorised");
+        }else if("3".equals(choice)){
+            System.out.println("Enter E-Wallet Provider");
+            String provider = sc.nextLine().trim();
+            System.out.println("Enter Account");
+            String account = sc.nextLine().trim();
+            pay = new payEwallet(finalAmount, provider, account, "Ref- " + System.currentTimeMillis() % 1000000);
+            pay.processPayment();
+            System.out.println("E-Wallet Verified");
+        }else{
+            System.out.println("Invalid Payment Choice");
+            return;
+        }
+        report.recordCompleteTransaction(activeTransaction, discount, serviceCharge, finalAmount, pay);
+        persistant.appendTransRecord(activeTransaction.getTransactionId(), activeTransaction.getCustomerName(), rawSubtotal, discount, serviceCharge, finalAmount, pay.getPaymentDetails());
+
+        System.out.println("Recipt Settled: " + activeTransaction.getTransactionId() + "Complete");
+        activeTransaction = null;
     }
     private static void ApplyPromotion() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ApplyPromotion'");
+        System.out.println("Evaluate Promotions");
+        if(activeTransaction == null){
+            System.out.println("No Active Transactions");
+            return;
+        }
+        PromoCalculator.resultPromo result = PromoCalculator.getBestPromo(activeTransaction);
+        if(result.getPromo() == null || result.getDiscountAmount() <= 0.0){
+            System.out.println("Result: No promotions are applicable");
+        }else{
+            Promotion p = result.getPromo();
+            System.out.println("BEST PROMOTION IDENTIFIED:");
+            System.out.printf("  Code       : %s\n", p.getPromoCode());
+            System.out.printf("  Name       : %s\n", p.getPromoName());
+            System.out.printf("  Savings    : RM %.2f\n", result.getDiscountAmount());
+        }
     }
+    
     private static void CreateTransaction() {
         System.out.println("Create / Modify Rental Transaction");
         if(activeTransaction == null){
@@ -96,7 +182,7 @@ public class Main {
                 String bookingId = sc.nextLine().trim();
                 Booking booking = book.findBooking(bookingId);
 
-                if(booking = null){
+                if(booking == null){
                     System.out.println("Error: Booking ID not Found");
                 }
                 if(booking.isCancelled()){
@@ -105,8 +191,56 @@ public class Main {
                 }
 
                 activeTransaction = new rentalTransaction(transId, booking);
+
+                Item courtItem = cat.findByCode(booking.getFacilityCode());
+                    if(courtItem != null){
+                        activeTransaction.addItem(courtItem, booking.getDurationHours());
+                }
+                System.out.println("Transaction " + transId + "linked to " + booking.getBookingID());
+            }else if ("2".equals(mode)){
+                System.out.print("Enter name: ");
+                String name = sc.nextLine().trim().toUpperCase();
+                System.out.print("Enter Contact Number: ");
+                String contactNo = sc.nextLine().trim();
+
+                activeTransaction = new rentalTransaction(transId, name, contactNo);
+                System.out.println("Transaction" + transId +"for walk in customer.");
+            }else {
+                System.out.println("Invalid Selection");
+                return;
             }
         }
+        boolean adding = true;
+        while(adding){
+            System.out.println("\nActive Transaction: " + activeTransaction.getTransactionId() + " (" + activeTransaction.getCustomerName() + ")");
+        
+        System.out.println("Enter Item Code to add");
+        System.out.println("Type done once Finished");
+        String code = sc.nextLine().trim().toUpperCase();
+
+        if("DONE".equals(code)){
+            adding = false;
+            break;
+        }
+
+        Item item = cat.findByCode(code);
+        if(item == null){
+            System.out.println("Error: Unkown Item Code.");
+            System.out.println("View Catalogue For item code");
+            continue;
+        }
+
+        System.out.print("Enter Quantity of Item for: " + item.getItemName());
+        try {
+            int Quantity = Integer.parseInt(sc.nextLine().trim());
+            activeTransaction.addItem(item, Quantity);
+            System.out.println("Item Added: " + item.getItemName() + "x" + Quantity);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Quantity must be positive");
+        }
+    }
+    activeTransaction.displayReceipt();
+
     }
     private static void BookingModule() {
         System.out.println("FACILITY BOOKING MODULE");
