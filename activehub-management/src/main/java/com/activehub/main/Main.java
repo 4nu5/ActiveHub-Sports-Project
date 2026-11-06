@@ -110,6 +110,7 @@ public class Main {
         String choice = sc.nextLine().trim();
 
         Payment pay = null;
+        try{
         if("1".equals(choice)){
             System.out.print("Enter Cash Amount: RM ");
             double cAmount = Double.parseDouble(sc.nextLine().trim());
@@ -140,6 +141,13 @@ public class Main {
             System.out.println("E-Wallet Verified");
         }else{
             System.out.println("Invalid Payment Choice");
+            return;
+        }
+        }catch(NumberFormatException e){
+            System.out.println("Error: Amount payed was not a digit");
+            return;
+        }catch(IllegalArgumentException e){
+            System.out.println("Payment Error " + e.getMessage());
             return;
         }
         report.recordCompleteTransaction(activeTransaction, discount, serviceCharge, finalAmount, pay);

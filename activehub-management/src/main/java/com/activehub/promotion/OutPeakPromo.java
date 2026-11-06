@@ -1,15 +1,16 @@
 package com.activehub.promotion;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+
 import com.activehub.Module.Booking;
 import com.activehub.Module.ItemCategory;
 import com.activehub.Module.rentalTransaction;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 
 
 public class OutPeakPromo implements Promotion {
     private static final LocalTime NonPeakHourStart = LocalTime.of(9, 0);
-    private static final LocalTime NonPeakHourEnd = LocalTime.of(17, 0);
+    private static final LocalTime NonPeakHourEnd = LocalTime.of(16, 0);
 
     @Override
     public String getPromoCode(){
