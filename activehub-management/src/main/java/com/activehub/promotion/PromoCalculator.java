@@ -30,25 +30,26 @@ public class PromoCalculator {
         public double getDiscountAmount() {
             return discountAmount;
         }
-             public resultPromo getBestPromo(rentalTransaction activeTransaction) {
-                Promotion bestPromo = null;
-                double maxDiscount = 0.0;
-
-            if(promo.isEligible(activeTransaction)){
+    }
+        public resultPromo getBestPromo(rentalTransaction activeTransaction) {
+            Promotion bestPromo = null;
+            double maxDiscount = 0.0;
+            for(Promotion promo : PromoAvailable){
+                 if(promo.isEligible(activeTransaction)){
                 double discount = promo.calculateDiscount(activeTransaction);
-                
+
                 if(discount > maxDiscount){
                     maxDiscount = discount;
                     bestPromo = promo;
                 }else if(discount == maxDiscount && discount > 0.0 && bestPromo != null){
-                    if(promo.getPromoCode().compareTo(bestPromo.getPromoCode()) < 0);
+                    if(promo.getPromoCode().compareTo(bestPromo.getPromoCode()) < 0){
                         bestPromo = promo;
+                    }
                 }
             }
+        }
             return new resultPromo(bestPromo, maxDiscount);
-               }
-            }
-
+    }
                public List<Promotion> getPromotionsAvailable(){
             return Collections.unmodifiableList(PromoAvailable);
         }

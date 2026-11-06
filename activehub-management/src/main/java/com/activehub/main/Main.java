@@ -179,7 +179,8 @@ public class Main {
         if(activeTransaction == null){
             System.out.println("1. Link to Existing Court Booking");
             System.out.println("2. Walk-In Equipment / Service Rental (No Court Booking)");
-            System.out.print("Choose mode (1-2): ");
+            System.out.println("3. Back to Menu");
+            System.out.print("Choose mode (1-3): ");
             String mode = sc.nextLine().trim();
 
             transactionSeq++;
@@ -197,22 +198,43 @@ public class Main {
                     System.out.println("Error: Booking is cancelled");
                     return;
                 }
-
+                try{
                 activeTransaction = new rentalTransaction(transId, booking);
-
                 Item courtItem = cat.findByCode(booking.getFacilityCode());
                     if(courtItem != null){
                         activeTransaction.addItem(courtItem, booking.getDurationHours());
-                }
+                } 
                 System.out.println("Transaction " + transId + "linked to " + booking.getBookingID());
+            }catch(IllegalArgumentException e){
+                System.out.println("Error: " + e.getMessage());
+            }
             }else if ("2".equals(mode)){
-                System.out.print("Enter name: ");
-                String name = sc.nextLine().trim().toUpperCase();
-                System.out.print("Enter Contact Number: ");
-                String contactNo = sc.nextLine().trim();
-
+                String name = "";
+               while (true) {
+                    System.out.print("Enter Name: ");
+                    name = sc.nextLine().trim();
+                    if (!name.isEmpty() && name.matches("^[a-zA-Z\\s'/.-]{3,50}$")) {
+                        break;
+                    }
+                    System.out.println("Name must contain only letter");
+                }
+                String contactNo = "";
+                while (true) {
+                    System.out.print("Enter Contact Number: ");
+                    contactNo = sc.nextLine().trim();
+                    if (!contactNo.isEmpty() && contactNo.matches("^\\+?[0-9\\-]{10,12}$")) {
+                        break;
+                    }
+                    System.out.println("Contact Number must contain 10 to 12 digits.");
+                }
+                try{
                 activeTransaction = new rentalTransaction(transId, name, contactNo);
                 System.out.println("Transaction" + transId +"for walk in customer.");
+                }catch(IllegalArgumentException e){
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }else if ("3".equals(mode)) {
+                return;
             }else {
                 System.out.println("Invalid Selection");
                 return;
@@ -237,7 +259,7 @@ public class Main {
             System.out.println("View Catalogue For item code");
             continue;
         }
-
+        while(true){
         System.out.print("Enter Quantity of Item for: " + item.getItemName());
         try {
             int Quantity = Integer.parseInt(sc.nextLine().trim());
@@ -245,8 +267,11 @@ public class Main {
             System.out.println("Item Added: " + item.getItemName() + "x" + Quantity);
         } catch (NumberFormatException e) {
             System.out.println("Error: Quantity must be positive");
+        }catch(IllegalArgumentException e){
+            System.out.println("Error: " + e.getMessage());
         }
     }
+}
     activeTransaction.displayReceipt();
 
     }
@@ -255,7 +280,8 @@ public class Main {
         System.out.println("1. Reserve Court / Facility");
         System.out.println("2. Cancel Existing Booking");
         System.out.println("3. View All Bookings");
-        System.out.print("Select sub-option (1-3): ");
+        System.out.println("4. Back to Menu");
+        System.out.print("Select sub-option (1-4): ");
         String sub = sc.nextLine().trim();
 
         if("1".equals(sub)){
@@ -264,7 +290,7 @@ public class Main {
                 while(true){
                 System.out.print("Enter Name: ");
                     name = sc.nextLine().trim();
-                    if(name == null || name.matches("^[a-zA-Z\\s'/.-]{3,50}$")){
+                    if(name.matches("^[a-zA-Z\\s'/.-]{3,50}$")){
                         break;
                     }
                     System.out.println("Name must contain only Letters");
@@ -273,15 +299,22 @@ public class Main {
                 while (true) { 
                 System.out.print("Enter Contact Number");
                     number = sc.nextLine().trim();
-                    if(number == null || number.matches("^\\+?[0-9\\-]{10,12}$")){
+                    if(number.matches("^\\+?[0-9\\-]{10,12}$")){
                         break;
                     }
                     System.out.println("Contact Number must contain only numbers");
                 }
+                String court = "";
+                while (true) { 
                 System.out.println("Enter Facility Code (Court - xx");
-                String court = sc.nextLine().trim().toUpperCase();
+                court = sc.nextLine().trim().toUpperCase();
+                if(court.matches("^COURT-0[1-4]$")){
+                    break;
+                }
+                    System.out.println("Invalid Court Number");
+                }
 
-                System.out.print("Enter Date of Booking");
+                System.out.print("Enter Date of Booking (YYYY-MM-DD)");
                 LocalDate date = LocalDate.parse(sc.nextLine().trim());
 
                 System.out.print("Enter Time of Booking (24 Hour format HH:MM");
@@ -310,6 +343,8 @@ public class Main {
             }
         }else if ("3".equals(sub)) {
             book.displayBookings();
+        }else if("4".equals(sub)){
+            return;
         }
     }
     private static void printMainMenu(){
