@@ -136,6 +136,7 @@ public class Reporting {
             }
             System.out.println(Border2);
         
+        
 
             System.out.println("4. Inventory / Service Usage Frequency");
             if(itemFrequent.isEmpty()){
