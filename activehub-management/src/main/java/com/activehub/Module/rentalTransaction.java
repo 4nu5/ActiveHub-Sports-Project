@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Manages the shopping lifecycle, association with court bookings,
+ * and tracks itemised rental charges prior to settlement.
+ */
+
 public class rentalTransaction {
     private final String transactionId;
     private final String customerName;

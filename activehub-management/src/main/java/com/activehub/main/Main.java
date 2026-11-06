@@ -39,12 +39,12 @@ public class Main {
         System.out.println("Active Hub Sports Centre");
         System.out.println(Border);
 
-        persistant.loadBookings(book);
+        persistant.loadBookings(book); //loads Bookings from servicePersistance which takes from booking.txt
         System.out.println("Booking Records reloaded");
 
         boolean running = true;
         while(running){
-            printMainMenu();
+            printMainMenu(); // Making main menu Interface
             System.out.print("Select Option 1-7: ");
             String input = sc.nextLine().trim();
 
@@ -78,6 +78,9 @@ public class Main {
             }
         }
     }
+    //Used to close out transactions
+    //User is able to use cash, card and ewallet
+    // Grabbing inputs and parsing it into String for easier storing
     private static void PaymentSettlement() {
         System.out.println("Payment & Close Transaction");
         if(activeTransaction == null){
@@ -173,6 +176,7 @@ public class Main {
             System.out.printf("  Savings    : RM %.2f\n", result.getDiscountAmount());
         }
     }
+    // Manages transactional workflows for both linked bookings and walk-in rentals
     
     private static void CreateTransaction() {
         System.out.println("Create / Modify Rental Transaction");
@@ -278,6 +282,7 @@ public class Main {
     activeTransaction.displayReceipt();
 
     }
+    // Handles facility reservations, immediate file persistence, and validated user input loops
     private static void BookingModule() {
         System.out.println("FACILITY BOOKING MODULE");
         System.out.println("1. Reserve Court / Facility");

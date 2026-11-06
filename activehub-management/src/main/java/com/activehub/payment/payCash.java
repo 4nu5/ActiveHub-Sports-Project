@@ -1,5 +1,11 @@
 package com.activehub.payment;
 
+/**
+ * Concrete payment implementation for cash settlements.
+ * Validates funds, account references, and returns formatted receipt audit strings.
+ * Same thing is done for all the other payment methods
+ */
+
 public class payCash implements Payment{
     private final double amountPayed;
     private final double cashReceived;

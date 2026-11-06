@@ -2,6 +2,11 @@ package com.activehub.Module;
 
 import java.util.Objects;
 
+/**
+ * Abstract Class demonstrating Abstraction and Encapsulation.
+ * Serves as the base superclass for all Equipment, Facility and Service billing
+ */
+
 public abstract class Item{
 
     private final String itemCode;

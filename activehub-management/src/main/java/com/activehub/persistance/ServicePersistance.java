@@ -13,6 +13,11 @@ import java.util.Collection;
 import com.activehub.Module.Booking;
 import com.activehub.Service.BookingSystem;
 
+/**
+ * Helps make the way to save details of past 
+ * records after the program has been shut down
+ */
+
 public class ServicePersistance {
     private static final String DATA_Dir = "Data";
     private static final String Bookings_File = DATA_Dir + File.separator + "bookings.txt";
@@ -39,6 +44,10 @@ public class ServicePersistance {
         return new File(targetDir, fileName);
     }
 
+/**
+ * File I/O: Writes active bookings to disk. Using the format below
+ * Schema: BookingID|CustomerName|ContactNumber|FacilityCode|Date|Time|Duration|Pax|Cancelled
+ */
    public void saveBookings(Collection<Booking> bookings) {
     File file = resolveDataFile("bookings.txt");
     try (PrintWriter write = new PrintWriter(new FileWriter(file, false))) {
@@ -59,6 +68,10 @@ public class ServicePersistance {
         System.err.println("Error: Failed to Write to " + file.getAbsolutePath() + ": " + e.getMessage());
     }
 }
+    /**
+ * Reloads booking from disk into memory upon system startup,
+ * parsing records.
+ */
     public void loadBookings(BookingSystem bookingService){
         File file = resolveDataFile("bookings.txt");
         if(!file.exists()){
@@ -91,6 +104,9 @@ public class ServicePersistance {
             System.err.println("Error: Could not Read " + Bookings_File + e.getMessage());
         }
     }
+    /**
+ * Appends settled transaction receipts to the permanent audit log.
+ */
     public void appendTransRecord(String transId, String customer, double rawSubtotal, double discount, double serviceCharge, double finalTotal, String paymentSummary){
         try(PrintWriter write = new PrintWriter(new FileWriter(Transaction_File, true))){
             write.printf("%s|%s|%.2f|%.2f|%.2f|%.2f|%s%n", transId, customer, rawSubtotal, discount, serviceCharge, paymentSummary);

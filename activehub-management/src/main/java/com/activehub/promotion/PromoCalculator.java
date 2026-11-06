@@ -6,6 +6,11 @@ import java.util.List;
 
 import com.activehub.Module.rentalTransaction;
 
+/**
+ * Engine for evaluating registered promotion strategies.
+ * Compares applicable discounts and applies alphabetical tie-breaking.
+ */
+
 public class PromoCalculator {
     private final List<Promotion> PromoAvailable = new ArrayList<>();
 

@@ -1,5 +1,10 @@
 package com.activehub.Module;
 
+/**
+ * Inheritance: Subclass extending abstract Item.
+ * Implements specific attributes and pricing rules for facility court rentals.
+ */
+
 public class FacilityItem extends Item{
     private final String surfaceType;
     private final int maxCapacity;

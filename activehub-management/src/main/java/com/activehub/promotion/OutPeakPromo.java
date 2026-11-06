@@ -7,6 +7,11 @@ import com.activehub.Module.Booking;
 import com.activehub.Module.ItemCategory;
 import com.activehub.Module.rentalTransaction;
 
+/**
+ * Concrete Promotion Strategy implementing Promotion.
+ * Evaluates eligibility and computes targeted discount savings.
+ */
+
 
 public class OutPeakPromo implements Promotion {
     private static final LocalTime NonPeakHourStart = LocalTime.of(9, 0);

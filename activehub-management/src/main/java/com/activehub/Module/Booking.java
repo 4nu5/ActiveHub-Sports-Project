@@ -4,6 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+
+/**
+ * Encapsulates court booking state and business validation rules.
+ * Maintains good booking identity and scheduling details.
+ */
+
 public class Booking {
     private final String bookingId;
     private final String custName;
@@ -21,6 +27,7 @@ public class Booking {
         if(bookingID == null || bookingID.trim().isEmpty()){
             throw new IllegalArgumentException("Booking Id cannot be blank");
         }
+        // input validation: enforces naming using letters and contact digit length
         if(custName == null || !custName.trim().matches("^[a-zA-Z\\s'/.-]{3,50}$")){
             throw new IllegalArgumentException("Customer must contain only letters");
         }

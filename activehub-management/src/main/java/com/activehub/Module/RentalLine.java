@@ -2,6 +2,12 @@ package com.activehub.Module;
 
 import java.util.Objects;
 
+
+/**
+ * Demonstrates Composition/Aggregation: Represents an individual line item
+ * inside a rental transaction, calculating line subtotals dynamically.
+ */
+
 public class RentalLine {
     private final Item item; 
     private int quantity;

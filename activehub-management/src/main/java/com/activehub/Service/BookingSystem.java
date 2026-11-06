@@ -39,7 +39,11 @@ public class BookingSystem {
         }
         return false;
     }
-
+    /**
+ * Collision Detection & Booking Management:
+ * Verifies court availability, prevents overlapping time slots,
+ * and maintains the in-memory booking registry.
+ */
 public Booking createBooking(String custName, String custContact, String facilityCode, LocalDate bookingDate, LocalTime bookingTime, int durationHours, int amountOfPeople){
     if(collisionCheck(facilityCode, bookingDate, bookingTime, durationHours)){
         throw new IllegalArgumentException(String.format("Collision detected: %s is already reserved during %s to %s on %s.", facilityCode, bookingDate, bookingTime, durationHours));
