@@ -24,28 +24,46 @@ public class ServicePersistance {
             dir.mkdir();
         }
     }
-    public void saveBookings(Collection<Booking> bookings){
-        try(PrintWriter write = new PrintWriter(new FileWriter(Bookings_File, false))){
-            for(Booking b : bookings){
-                write.printf("%s|%s|%s|%s|%s|%s|%d|%d|%b%n",
-                    b.getBookingID(),
-                    b.getCustName(),
-                    b.getCustContact(),
-                    b.getFacilityCode(),
-                    b.getBookingDate().toString(),
-                    b.getBookingTime().toString(),
-                    b.getDurationHours(),
-                    b.getAmountofPeople(),
-                    b.isCancelled()
-                );
-            }
-            } catch(IOException e){
-                System.err.println("Error: Failed to Write to " + Bookings_File + e.getMessage());
+
+    private static File resolveDataFile(String fileName) {
+        File nestedDir = new File("activehub-management/Data");
+        File localDir = new File("Data");
+
+        File targetDir = nestedDir.exists() || new File("activehub-management").exists()
+                ? nestedDir
+                : localDir;
+
+        if (!targetDir.exists()) {
+            targetDir.mkdirs();
         }
+        return new File(targetDir, fileName);
     }
+
+   public void saveBookings(Collection<Booking> bookings) {
+    File file = resolveDataFile("bookings.txt");
+    try (PrintWriter write = new PrintWriter(new FileWriter(file, false))) {
+        for (Booking b : bookings) {
+            write.printf("%s|%s|%s|%s|%s|%s|%d|%d|%b%n",
+                b.getBookingID(),
+                b.getCustName(),
+                b.getCustContact(),
+                b.getFacilityCode(),
+                b.getBookingDate().toString(),
+                b.getBookingTime().toString(),
+                b.getDurationHours(),
+                b.getAmountofPeople(),
+                b.isCancelled()
+            );
+        }
+    } catch (IOException e) {
+        System.err.println("Error: Failed to Write to " + file.getAbsolutePath() + ": " + e.getMessage());
+    }
+}
     public void loadBookings(BookingSystem bookingService){
-        File file = new File(Bookings_File);
-        if(!file.exists()) return;
+        File file = resolveDataFile("bookings.txt");
+        if(!file.exists()){
+             return;
+        }
 
         try(BufferedReader read = new BufferedReader(new FileReader(file))){
             String line;
@@ -63,7 +81,7 @@ public class ServicePersistance {
                         int pax = Integer.parseInt(token[7]);
                         boolean cancel = Boolean.parseBoolean(token[8]);
 
-                        Booking booking = bookingService.createBooking(customer, contact, facility, date, time, duration, duration);
+                        Booking booking = bookingService.createBooking(customer, contact, facility, date, time, duration, pax);
                         if(cancel){
                             booking.Cancelled();
                         }

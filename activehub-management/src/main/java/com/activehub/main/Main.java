@@ -124,7 +124,7 @@ public class Main {
                 return;
             }
         }else if("2".equals(choice)){
-            System.out.println("Enter Card Number");
+            System.out.println("Enter Card Number: ");
             String CardNo = sc.nextLine().trim();
             System.out.print("Enter Card Type (Credit/Debit)");
             String cardType = sc.nextLine().trim();
@@ -132,7 +132,7 @@ public class Main {
             pay.processPayment();
             System.out.println("Card Authorised");
         }else if("3".equals(choice)){
-            System.out.println("Enter E-Wallet Provider");
+            System.out.println("Enter E-Wallet Provider: ");
             String provider = sc.nextLine().trim();
             System.out.println("Enter Account");
             String account = sc.nextLine().trim();
@@ -193,6 +193,7 @@ public class Main {
 
                 if(booking == null){
                     System.out.println("Error: Booking ID not Found");
+                    return;
                 }
                 if(booking.isCancelled()){
                     System.out.println("Error: Booking is cancelled");
@@ -207,6 +208,7 @@ public class Main {
                 System.out.println("Transaction " + transId + "linked to " + booking.getBookingID());
             }catch(IllegalArgumentException e){
                 System.out.println("Error: " + e.getMessage());
+                return;
             }
             }else if ("2".equals(mode)){
                 String name = "";
@@ -232,6 +234,7 @@ public class Main {
                 System.out.println("Transaction" + transId +"for walk in customer.");
                 }catch(IllegalArgumentException e){
                     System.out.println("Error: " + e.getMessage());
+                    return;
                 }
             }else if ("3".equals(mode)) {
                 return;
@@ -244,8 +247,8 @@ public class Main {
         while(adding){
             System.out.println("\nActive Transaction: " + activeTransaction.getTransactionId() + " (" + activeTransaction.getCustomerName() + ")");
         
-        System.out.println("Enter Item Code to add");
-        System.out.println("Type done once Finished");
+        System.out.println("Enter Item Code to add ");
+        System.out.println("Type done once Finished: ");
         String code = sc.nextLine().trim().toUpperCase();
 
         if("DONE".equals(code)){
@@ -297,7 +300,7 @@ public class Main {
                 }
                 String number = "";
                 while (true) { 
-                System.out.print("Enter Contact Number");
+                System.out.print("Enter Contact Number: ");
                     number = sc.nextLine().trim();
                     if(number.matches("^\\+?[0-9\\-]{10,12}$")){
                         break;
@@ -306,7 +309,7 @@ public class Main {
                 }
                 String court = "";
                 while (true) { 
-                System.out.println("Enter Facility Code (Court - xx");
+                System.out.println("Enter Facility Code (Court - xx): ");
                 court = sc.nextLine().trim().toUpperCase();
                 if(court.matches("^COURT-0[1-4]$")){
                     break;
@@ -314,30 +317,32 @@ public class Main {
                     System.out.println("Invalid Court Number");
                 }
 
-                System.out.print("Enter Date of Booking (YYYY-MM-DD)");
+                System.out.print("Enter Date of Booking (YYYY-MM-DD): ");
                 LocalDate date = LocalDate.parse(sc.nextLine().trim());
 
-                System.out.print("Enter Time of Booking (24 Hour format HH:MM");
+                System.out.print("Enter Time of Booking (24 Hour format HH:MM): ");
                 LocalTime time = LocalTime.parse(sc.nextLine().trim());
 
-                System.out.print("Enter Duration of Booking");
+                System.out.print("Enter Duration of Booking: ");
                 int duration = Integer.parseInt(sc.nextLine().trim());
                 
-                System.out.print("Enter Amount of Pax");
+                System.out.print("Enter Amount of Pax: ");
                 int pax = Integer.parseInt(sc.nextLine().trim());
 
                 Booking booking = book.createBooking(name, number, court, date, time, duration, pax);
                 System.out.println("Booking Succesfull -> " + booking.getBookingID());
+                persistant.saveBookings(book.getAllBookings());
             } catch (DateTimeParseException e) {
                 System.out.println("Error: Invalid date or time format. Please use YYYY-MM-DD and HH:MM.");
             }catch(Exception e){
                 System.out.println("Booking Refused: " + e.getMessage());
             }
         }else if ("2".equals(sub)) {
-            System.out.print("Enter Booking ID to Cancel Booking (BK-XXXX)");
+            System.out.print("Enter Booking ID to Cancel Booking (BK-XXXX): ");
             String id = sc.nextLine().trim();
             if(book.cancelBooking(id)){
                 System.out.println("Success: Booking " + id + "has been cancelled");
+                persistant.saveBookings(book.getAllBookings());
             }else{
                 System.out.println("Error: Booking ID not found or already cancelled");
             }
