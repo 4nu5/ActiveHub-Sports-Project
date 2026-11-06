@@ -21,10 +21,10 @@ public class Booking {
         if(bookingID == null || bookingID.trim().isEmpty()){
             throw new IllegalArgumentException("Booking Id cannot be blank");
         }
-        if(custName == null || !custName.trim().matches("^[a-zA-Z\\\\s'/.-]{3,50}$")){
+        if(custName == null || !custName.trim().matches("^[a-zA-Z\\s'/.-]{3,50}$")){
             throw new IllegalArgumentException("Customer must contain only letters");
         }
-        if(custContact == null || !custContact.trim().matches("^\\\\+?[0-9\\\\-]{10,11}$")){
+        if(custContact == null || !custContact.trim().matches("^\\+?[0-9\\-]{10,12}$")){
             throw new IllegalArgumentException("Customer Contact is Blank");
         }
         if(facilityCode == null || facilityCode.trim().isEmpty()){

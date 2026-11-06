@@ -1,6 +1,12 @@
 package com.activehub.repository;
-import com.activehub.Module.*;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import com.activehub.Module.Equipment;
+import com.activehub.Module.FacilityItem;
+import com.activehub.Module.Item;
+import com.activehub.Module.ServiceItem;
 
 public class CatalogueRepo {
     private final Map<String, Item> catalogue = new LinkedHashMap<>();
@@ -21,10 +27,10 @@ public class CatalogueRepo {
         addItem(new Equipment("E04", "Football", "Good", 7));
         addItem(new Equipment("E05", "Football boot", "Good", 7));
 
-        addItem(new ServiceItem("S01", "Drink",3, "jo"));
-        addItem(new ServiceItem("S02", "Food",6, "hg"));
-        addItem(new ServiceItem("S03", "Cleaning",4, "gs"));
-        addItem(new ServiceItem("S04", "adad",4, "da"));
+        addItem(new ServiceItem("S01", "Drink",3, "Per Bottle"));
+        addItem(new ServiceItem("S02", "Food",6, "Per packet"));
+        addItem(new ServiceItem("S03", "Cleaning",10, "Per booking"));
+        addItem(new ServiceItem("S04", "Towel & Shower",12, "Per Booking"));
     }
     public void addItem(Item item){
         Objects.requireNonNull(item, "Item Cannot be Null");

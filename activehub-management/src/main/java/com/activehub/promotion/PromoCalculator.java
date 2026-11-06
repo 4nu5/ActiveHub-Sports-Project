@@ -30,12 +30,12 @@ public class PromoCalculator {
         public double getDiscountAmount() {
             return discountAmount;
         }
-        public resultPromo getBestPromo(rentalTransaction transaction){
-            Promotion bestPromo = null;
-            double maxDiscount = 0.0;
+             public resultPromo getBestPromo(rentalTransaction activeTransaction) {
+                Promotion bestPromo = null;
+                double maxDiscount = 0.0;
 
-            if(promo.isEligible(transaction)){
-                double discount = promo.calculateDiscount(transaction);
+            if(promo.isEligible(activeTransaction)){
+                double discount = promo.calculateDiscount(activeTransaction);
                 
                 if(discount > maxDiscount){
                     maxDiscount = discount;
@@ -46,14 +46,11 @@ public class PromoCalculator {
                 }
             }
             return new resultPromo(bestPromo, maxDiscount);
-        }
-    }
+               }
+            }
+
                public List<Promotion> getPromotionsAvailable(){
             return Collections.unmodifiableList(PromoAvailable);
         }
-               public static resultPromo getBestPromo(rentalTransaction activeTransaction) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'getBestPromo'");
-               }
-}
+    }
 

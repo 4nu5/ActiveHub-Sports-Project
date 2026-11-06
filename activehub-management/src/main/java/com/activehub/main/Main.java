@@ -86,7 +86,7 @@ public class Main {
         }
 
         double rawSubtotal = activeTransaction.getPreDisSubtotal();
-        PromoCalculator.resultPromo result = PromoCalculator.getBestPromo(activeTransaction);
+        PromoCalculator.resultPromo result = promo.getBestPromo(activeTransaction);
         double discount = (result.getPromo() != null) ? result.getDiscountAmount() : 0.0;
         double adjustedSubtotal = Math.max(0.0, rawSubtotal - discount);
         double serviceCharge = adjustedSubtotal * 0.10;
@@ -162,7 +162,7 @@ public class Main {
             System.out.println("No Active Transactions");
             return;
         }
-        PromoCalculator.resultPromo result = PromoCalculator.getBestPromo(activeTransaction);
+        PromoCalculator.resultPromo result = promo.getBestPromo(activeTransaction);
         if(result.getPromo() == null || result.getDiscountAmount() <= 0.0){
             System.out.println("Result: No promotions are applicable");
         }else{
@@ -260,10 +260,24 @@ public class Main {
 
         if("1".equals(sub)){
             try {
+                String name = "";
+                while(true){
                 System.out.print("Enter Name: ");
-                String name = sc.nextLine().trim();
+                    name = sc.nextLine().trim();
+                    if(name == null || name.matches("^[a-zA-Z\\s'/.-]{3,50}$")){
+                        break;
+                    }
+                    System.out.println("Name must contain only Letters");
+                }
+                String number = "";
+                while (true) { 
                 System.out.print("Enter Contact Number");
-                String number = sc.nextLine().trim();
+                    number = sc.nextLine().trim();
+                    if(number == null || number.matches("^\\+?[0-9\\-]{10,12}$")){
+                        break;
+                    }
+                    System.out.println("Contact Number must contain only numbers");
+                }
                 System.out.println("Enter Facility Code (Court - xx");
                 String court = sc.nextLine().trim().toUpperCase();
 
@@ -275,8 +289,7 @@ public class Main {
 
                 System.out.print("Enter Duration of Booking");
                 int duration = Integer.parseInt(sc.nextLine().trim());
-
-
+                
                 System.out.print("Enter Amount of Pax");
                 int pax = Integer.parseInt(sc.nextLine().trim());
 
